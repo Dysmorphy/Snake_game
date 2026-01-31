@@ -1,5 +1,5 @@
 #include <iostream>
-#include <vector>
+#include <deque>
 
 
 struct Point {
@@ -33,7 +33,7 @@ void print_arr (const int arr[SIZE][SIZE]){
         std::cout<<"\n";
     }
 }
-void print_vec (const std::vector<Point>& vec){
+void print_vec (const std::deque<Point>& vec){
     for (int el=0;el<vec.size();el++){
         std::cout<<vec[el].row<<" "<<vec[el].col<<'\n';
     }
@@ -45,7 +45,7 @@ bool move_check (const Point& snake_head){
     || snake_head.col == BORDER_MIN 
     || snake_head.col == BORDER_MAX;
 }
-Point make_move(const std::vector <Point>& snake_coords,int direction) {
+Point make_move(const std::deque <Point>& snake_coords,int direction) {
     //making a move using a given direction
     Point snake_head = snake_coords[snake_coords.size()-1];
     switch (direction) {
@@ -63,13 +63,13 @@ Point make_move(const std::vector <Point>& snake_coords,int direction) {
             break;
     }
 }
-void update_structure (int field[SIZE][SIZE],std::vector <Point>& snake_coords, Point head_new){
+void update_structure (int field[SIZE][SIZE],std::deque <Point>& snake_coords, Point head_new){
     //updating a snake and a field after the snaked has moved
     bool ate_food = (field[head_new.row][head_new.col] == FOOD);
     if (ate_food == false) {
         Point deleted_coord = snake_coords[0];
         field [deleted_coord.row][deleted_coord.col] = EMPTY;
-        snake_coords.erase(snake_coords.begin());
+        snake_coords.pop_front();
         
     }
     snake_coords.push_back(head_new);
@@ -91,7 +91,7 @@ int main(){
     }
 
     //creating a snake
-    std::vector <Point> snake_coords;
+    std::deque <Point> snake_coords;
     Point snake_start = {SIZE/2,SIZE/2};
     snake_coords.push_back(snake_start);
     
