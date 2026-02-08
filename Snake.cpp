@@ -18,12 +18,15 @@ enum Field_consts {
     };
 
 struct Point {
-    int row;
-    int col;
+    int row {};
+    int col {};
+
     void print() const {
         std::cout<<row<<" "<<col;
     //need overloaded = and std::cout operators
     //once completed, change check_existence method
+    //need to write tests for the existing classes and member functions
+    // Implement randomizer into update_structure member function
     }
 };
 
@@ -41,12 +44,12 @@ struct Field{
         }
         tiles_generated = true;
     }
-    void print() {
+    friend void print(const Field& object){
         for (int row = 0;row<SIZE;row++){
             for (int col =0;col<SIZE;col++){
-                std::cout<<tiles[row][col]<<" ";
+                std::cout<<object.tiles[row][col]<<" ";
             }
-            std::cout<<std::endl;
+            std::cout<<'\n';
         }
     }
 };
@@ -54,18 +57,22 @@ struct Field{
 struct Snake {
     Point m_start {SIZE/2,SIZE/2};
     std::deque <Point> coords {{m_start}};
+
     void print() const{
         for (int el = 0;el<coords.size();el++){
             std::cout<<coords[el].row<<" "<<coords[el].col;
         }
         std::cout<<std::endl;
     }
+
     Point get_head () const{
         return coords [coords.size()-1];
     }
+
     Point get_tail () const {
         return coords [0];
     }
+
     bool check_existence (Point el) {
         for (int index=0;index<coords.size();index++){
             if (el.row == coords[index].row && el.col == coords[index].col){
@@ -74,11 +81,13 @@ struct Snake {
         }
         return false;
     }
+
 };
 class FoodRandomizer {
     private:
     std::mt19937 mt {std::random_device {} ()};
     std::uniform_int_distribution<> in_frame {BORDER_MIN+1,BORDER_MAX-1};
+
     public:
     Point generate_position(){
         return {in_frame(mt),in_frame(mt)};
@@ -86,16 +95,20 @@ class FoodRandomizer {
 };
 class Game {
     private:
+
     Field game_field;
     Snake game_snake;
     FoodRandomizer randomizer;
     bool running = true;
+
     public:
+
     void start(){
         game_field.generate_field();
         Point snake = game_snake.get_head();
         game_field.tiles[snake.row][snake.col] = SNAKE_BODY;
     }
+
     bool check_move(const Point& snake_head) const {
         if (snake_head.row == BORDER_MIN 
             || snake_head.row == BORDER_MAX 
@@ -104,7 +117,8 @@ class Game {
             || game_field.tiles[snake_head.row][snake_head.col] == SNAKE_BODY) return true;
         return false;
     }
-    Point make_move (int direction){
+
+    Point make_move (int direction) const{
         Point snake_head = game_snake.get_head();
         switch (direction) {
         case RIGHT:
@@ -121,6 +135,7 @@ class Game {
             break;
         } 
     }
+
     void update_structure (int direction){
         if (game_field.tiles_generated == false) {
             throw std::logic_error("The field hasn't been generated");
@@ -143,17 +158,23 @@ class Game {
         game_snake.coords.push_back(new_head);
         
     }
-    void print_field(){
-            game_field.print();
-    }
+
+    friend void print(const Game& object);
+
     //delete
     void make_food (const Point& tile){
         game_field.tiles[tile.row][tile.col] = FOOD;
     }
 
 };
+
+void print(const Game& object){
+    print(object.game_field);
+}
+
+
 int main(){
-        FoodRandomizer b;
-        Point a = b.generate_position();
-        a.print();
+        Game a {};
+        a.start();
+        print(a);
 }
