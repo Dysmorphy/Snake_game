@@ -19,14 +19,15 @@ void Field::generate_field(){
         tiles_generated = true;
 };
 
-void Field::print() {
+std::ostream& operator<< (std::ostream& out, const Field& field){
     for (int row = 0;row<SIZE;row++){
             for (int col =0;col<SIZE;col++){
-                std::cout<<tiles[row][col]<<" ";
+                out<<field.tiles[row][col]<<" ";
             }
-            std::cout<<'\n';
+            out<<'\n';
         }
-}
+    return out;
+};
 
 void Game::start () {
     game_field.generate_field();
@@ -85,9 +86,12 @@ void Game::update_structure (int direction) {
         game_field.tiles[new_head.row][new_head.col] = SNAKE_BODY;
         game_snake.coords.push_back(new_head);
 };
-void Game::print(){
-    game_field.print();
-}
+
+std::ostream& operator<< (std::ostream& out,const Game& game){
+    out<<game.game_field;
+    return out;
+};
+
 
 
 

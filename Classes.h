@@ -28,8 +28,10 @@ struct Field {
     int tiles [SIZE][SIZE];
     bool tiles_generated = false;
     void generate_field ();
-    void print();
+    friend inline std::ostream& operator<<(std::ostream& out,const Field& field);
 };
+inline std::ostream& operator<<(std::ostream& out, const Field& field);
+
 struct Snake {
     Point m_start {SIZE/2,SIZE/2};
     std::deque <Point> coords {{m_start}};
@@ -63,6 +65,7 @@ class Game {
     bool is_collision (const Point& snake_head) const;
     Point make_move (int direction) const;
     void update_structure (int direction);
-    void print();
+    friend std::ostream& operator<< (std::ostream& out, const Game& game);
 
 };
+std::ostream& operator<< (std::ostream& out, const Game& game);
