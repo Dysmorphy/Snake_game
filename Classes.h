@@ -1,8 +1,22 @@
 #pragma once
-#include "Consts.h"
 #include <deque>
 #include <random>
 
+enum Field_consts {
+    EMPTY,
+    SNAKE_BODY,
+    FOOD,
+    WALL,
+    SIZE = 20,
+    BORDER_MAX = SIZE-1,
+    BORDER_MIN = 0
+    };
+enum Directions {
+    RIGHT,
+    LEFT,
+    UP,
+    DOWN
+};
 
 struct Point {
     int row {};
@@ -21,10 +35,10 @@ struct Snake {
     std::deque <Point> coords {{m_start}};
     void print() const;
     Point get_head () const {
-        return coords[coords.size()-1];
+        return coords.back();
     };
     Point get_tail () const {
-        return coords [0];
+        return coords.front();
     };
     
 };
