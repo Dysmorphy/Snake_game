@@ -1,7 +1,6 @@
 #include "Classes.h"
 #include <iostream>
 #include <ncurses.h>
-//create a field in terminal
 
 
 int main(){
@@ -45,12 +44,13 @@ int main(){
                 game.update_structure(direction);
 
                 game.draw_inner();
-                
+
                 napms(100);
 
         
         }
         
+        endwin();
         
         
 }
