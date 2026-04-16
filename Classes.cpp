@@ -1,6 +1,6 @@
 #include "Classes.h"
 #include <iostream>
-
+#include <ncurses.h>
 
 void Point::print() const { 
     std::cout<<row<<" "<<col<<"\n";
@@ -33,6 +33,10 @@ void Game::start () {
     game_field.generate_field();
     Point snake = game_snake.get_head();
     game_field.tiles[snake.row][snake.col] = SNAKE_BODY;
+
+    Point first_food = randomizer.generate_position();
+    game_field.tiles[first_food.row][first_food.col] = FOOD;
+    last_food_generated = first_food;
 };
 
 
@@ -77,20 +81,75 @@ void Game::update_structure (int direction) {
         bool ate_food = false;
         if (game_field.tiles[new_head.row][new_head.col] == FOOD){
             ate_food = true;
+
+            Point new_food = randomizer.generate_position();
+            last_food_generated = new_food;
+            game_field.tiles[new_food.row][new_food.col] = FOOD;
         }
+
         if (ate_food == false){
             Point tail = game_snake.get_tail();
+            game_snake.prev_tail = tail;
             game_field.tiles[tail.row][tail.col] = EMPTY;
             game_snake.coords.pop_front();
         }
+
         game_field.tiles[new_head.row][new_head.col] = SNAKE_BODY;
         game_snake.coords.push_back(new_head);
 };
 
+
 std::ostream& operator<< (std::ostream& out,const Game& game){
     out<<game.game_field;
     return out;
+
 };
+
+
+void Game::draw_borders() const {
+    
+    for (int row = 0;row<SIZE;row++){
+        for (int col =0;col<SIZE;col++){
+
+            if (row == BORDER_MIN && col == BORDER_MAX){
+                mvaddch(row,col,ACS_URCORNER);
+            }
+
+            else if (row == BORDER_MIN && col == BORDER_MIN){
+                mvaddch(row,col,ACS_ULCORNER);
+            }
+            else if (row == BORDER_MAX && col == BORDER_MIN){
+                mvaddch(row,col,ACS_LLCORNER);
+            }
+            else if (row == BORDER_MAX && col == BORDER_MAX){
+                 mvaddch(row,col,ACS_LRCORNER);
+            }
+
+            else if (row == BORDER_MIN || row == BORDER_MAX){
+                mvaddch(row,col,ACS_HLINE);
+
+            }
+
+            else if (col == BORDER_MIN || col == BORDER_MAX){
+                mvaddch(row,col,ACS_VLINE);
+            }
+        }
+    }
+    refresh();
+}  
+
+
+void Game::draw_inner () const {
+    const Point& snake_head = game_snake.get_head();
+    const Point& prev_snake_tail = game_snake.prev_tail;
+    mvprintw(snake_head.row,snake_head.col,"#");
+    mvprintw(prev_snake_tail.row,prev_snake_tail.col," ");
+
+    mvprintw(last_food_generated.row,last_food_generated.col, "*");
+
+
+    refresh();
+} 
 
 
 

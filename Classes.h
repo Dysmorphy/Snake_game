@@ -7,10 +7,13 @@ enum Field_consts {
     SNAKE_BODY,
     FOOD,
     WALL,
-    SIZE = 20,
+    SIZE = 16,
     BORDER_MAX = SIZE-1,
-    BORDER_MIN = 0
+    BORDER_MIN = 0,
+    NON_EXISTENT = -1
     };
+
+
 enum Directions {
     RIGHT,
     LEFT,
@@ -18,11 +21,13 @@ enum Directions {
     DOWN
 };
 
+
 struct Point {
     int row {};
     int col {};
     void print() const;
 };
+
 
 struct Field {
     int tiles [SIZE][SIZE];
@@ -32,9 +37,12 @@ struct Field {
 };
 inline std::ostream& operator<<(std::ostream& out, const Field& field);
 
+
 struct Snake {
     Point m_start {SIZE/2,SIZE/2};
     std::deque <Point> coords {{m_start}};
+    Point prev_tail{NON_EXISTENT,NON_EXISTENT};
+
     void print() const;
     Point get_head () const {
         return coords.back();
@@ -44,6 +52,8 @@ struct Snake {
     };
     
 };
+
+
 class FoodRandomizer {
     private:
     std::mt19937 mt {std::random_device {} ()};
@@ -53,19 +63,30 @@ class FoodRandomizer {
         return {in_frame(mt),in_frame(mt)};
     };
 };
+
+
 class Game {
     private:
     Field game_field;
     Snake game_snake;
     FoodRandomizer randomizer;
-    bool running = true;
+    Point make_move (int direction) const;
+    Point last_food_generated {NON_EXISTENT,NON_EXISTENT};
+
     public:
+    bool running = true;
 
     void start();
     bool is_collision (const Point& snake_head) const;
-    Point make_move (int direction) const;
     void update_structure (int direction);
     friend std::ostream& operator<< (std::ostream& out, const Game& game);
+
+    void test_add_food(const Point& food_coords){
+        game_field.tiles[food_coords.row][food_coords.col] = FOOD;
+    }
+
+    void draw_borders () const;
+    void draw_inner () const;
 
 };
 std::ostream& operator<< (std::ostream& out, const Game& game);
