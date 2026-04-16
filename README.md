@@ -1,2 +1,13 @@
-This repository contains shitty C++ code for snake game. The game launches in terminal using ncurses
-Complile Main.cpp and Classes.cpp with -lncurses flag
+Snake Game (C++ / ncurses)
+
+A simple snake game written in C++ using ncurses. Runs in the terminal.
+
+Build
+You can use any compiler
+с++ Main.cpp Classes.cpp -lncurses -o snake
+Run
+./snake
+
+Requirements
+C++ compiler (g++)
+ncurses library
